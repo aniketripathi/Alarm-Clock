@@ -21,11 +21,13 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Calendar;
+
 
 
 /**
@@ -64,8 +66,9 @@ public class AlarmWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					AlarmWindow window = new AlarmWindow();
-					window.frmAlarm.setVisible(true);
+					frmAlarm.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

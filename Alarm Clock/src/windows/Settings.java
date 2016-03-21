@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import java.awt.Color;
@@ -18,9 +19,28 @@ import others.Config;
 
 import javax.swing.UIManager;
 import java.awt.Dimension;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
+import java.security.CodeSource;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.awt.Window.Type;
 
 /**
  * This class creates a window used to change the user dependent settings of the application. This includes the alarm message and the
@@ -30,17 +50,18 @@ import java.net.URL;
  * @author Aniket
  *
  */
-public class Settings extends JFrame implements ActionListener {
-
+public class Settings  {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7764463873463374178L;
 	Config config;
 	private JPanel contentPane;
 	private JTextField txtTimesUp;
-	private static Settings frame;
+	private static JFrame frame;
+	private static Settings window;
+	private static  JComboBox<String> comboBox;
+	private static  JCheckBox chckbxIncludeAlarmMessage;
+	private static  JButton btnAddTone;
+	private static  JButton btnApply;
+	private static  JButton btnCancel;
 
 	/**
 	 * Launch the Settings Window.
@@ -50,13 +71,10 @@ public class Settings extends JFrame implements ActionListener {
 			
 
 			public void run() {
-				try {
-					frame = new Settings();
+				
+					window = new Settings();
+					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					frame.setVisible(true);
-					frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		});
 	}
@@ -68,33 +86,62 @@ public class Settings extends JFrame implements ActionListener {
 	 * @return true if file is of *.wav type and false for all other types
 	 */
 	private boolean acceptFile(String fileName){
-		 return fileName.toLowerCase().endsWith(".wav");
-	}
+		
+		if(fileName != null)
+			return fileName.toLowerCase().endsWith(".wav");
+		
+		return false;
+		}
 	
 	
 	/**
 	 * Method used to add files from /main/resource/audio folder to the comboBox, adds only *.wav files. The files are first
-	 * checked using acceptFile() method.
+	 * checked using acceptFile() method. This adopted is used from one of the forums of StackOverflow.
 	 * @param comboBox  comboBox where files needs to be added
 	 */
 	private void addFiles(JComboBox<String> comboBox) {
-		File folder;
-		try {
-		 URL url = Settings.class.getResource("/main/resources/audio");
-		  folder = new File( url.toURI());
-		}
-		catch(URISyntaxException e){
-		folder = null;	
-		}
-		if(folder != null){
-		String files[] =folder.list();
-		for(String file:files){
-			if(acceptFile(file)) {
-				comboBox.addItem(file);
-			}
-		}
-		}
+	try{
+		final String path = "main/resources/audio";
+		final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+
+		if(jarFile.isFile()) {  									// Run with JAR file
+		    final JarFile jar = new JarFile(jarFile);
+		    final Enumeration<JarEntry> entries = jar.entries(); 		//gives ALL entries in jar
+		    while(entries.hasMoreElements()) {
+		        final String name = entries.nextElement().getName();
+		        if (name.startsWith(path + "/")) { 						//filter according to the path
+		            String tempname = name.substring(name.lastIndexOf("/")+1);  // extract only file name
+		            if(acceptFile(name))
+		            	comboBox.addItem(tempname);
+		            
+		        }
+		    }
+		    jar.close();
+		} else { 															// Run with IDE
+		    final URL url = Settings.class.getResource("/" + path);
+		    if (url != null) {
+		        try {
+		            final File apps = new File(url.toURI());
+		            for (File app : apps.listFiles()) {
+		            	 String tempname = app.toString().substring(app.toString().lastIndexOf('\\')+1);  // extract only file name -use '\' as separator
+				            if(acceptFile(tempname))
+				            	comboBox.addItem(tempname);
+		            }
+		        } catch (URISyntaxException ex) {
+		            // never happens
+		        }
+		    }
+		}	}
+	
+	
+	
+	catch(Exception e){
+		JOptionPane.showInputDialog("error" + e.getMessage() + e.getLocalizedMessage());
 	}
+		
+	
+	}
+	
 		
 		
 	
@@ -111,56 +158,67 @@ public class Settings extends JFrame implements ActionListener {
 	 * Loading previous settings
 	 */
 		String fileName = config.getFileName();
-		boolean includeMessage = config.getIncludeMessageStatus();
 		String alarmMessage = config.getAlarmMessage();
-		
+		boolean includeMessage = config.getIncludeMessageStatus();
 	/**
 	 * Setting Attributes of the Settings Window
 	 */
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle("Settings");
-		setType(Type.UTILITY);
-		setBounds(100, 100, 357, 215);
+		frame = new JFrame();
+		frame.setType(Type.UTILITY);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setTitle("Settings");
+		frame.setBounds(100, 100, 357, 215);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		frame.setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		
 		/**
-		 * Apply Button
+		 * OK button
 		 */
-		JButton btnApply = new JButton("OK");
+		btnApply = new JButton("OK");
 		btnApply.setMinimumSize(new Dimension(69, 23));
 		btnApply.setMaximumSize(new Dimension(69, 23));
 		btnApply.setPreferredSize(new Dimension(69, 23));
 		btnApply.setBounds(161, 153, 70, 23);
 		contentPane.add(btnApply);
-		btnApply.addActionListener(this);
-		btnApply.setActionCommand("0");
+		btnApply.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				config.setSettings((String) comboBox.getSelectedItem(), chckbxIncludeAlarmMessage.isSelected(), txtTimesUp.getText());
+				Settings.close();
+				
+			}
+		});
+		
+		
 		/**
 		 * Cancel Button 
 		 */
-		btnApply.setActionCommand("1");
-		JButton btnCancel = new JButton("Cancel");
+		
+		btnCancel = new JButton("Cancel");
 		btnCancel.setMinimumSize(new Dimension(69, 23));
 		btnCancel.setMaximumSize(new Dimension(69, 23));
 		btnCancel.setPreferredSize(new Dimension(69, 23));
 		contentPane.add(btnCancel);
-		btnCancel.addActionListener(this);
-		btnCancel.setBounds(277, 153, 70, 23);
+		btnCancel.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				Settings.close();
+				
+			}
+		});		btnCancel.setBounds(277, 153, 70, 23);
 		
 		
 		
-		/** ComboBox 
-		 *  
-		 */
-		final JComboBox<String> comboBox = new JComboBox<String>();
+		comboBox = new JComboBox<String>();
 		comboBox.setBounds(90, 8, 167, 22);
 		contentPane.add(comboBox);
-		addFiles(comboBox); 			//adding filenames
+		addFiles(comboBox);							//adding filenames
+		if(fileName != null)
 		comboBox.setSelectedItem(fileName); 		// Applying previous settings 
-		btnApply.setActionCommand("2");
-		btnApply.setActionCommand("3");
+		
 		
 		
 		
@@ -172,38 +230,42 @@ public class Settings extends JFrame implements ActionListener {
 		lblAlarmTone.setBounds(10, 11, 70, 14);
 		contentPane.add(lblAlarmTone);
 		
-		/**
-		 * Include Alarm Message CheckBox
-		 */
-		final JCheckBox chckbxIncludeAlarmMessage = new JCheckBox("Include Alarm Message");
-		chckbxIncludeAlarmMessage.setBounds(20, 46, 155, 23);
-		contentPane.add(chckbxIncludeAlarmMessage);
-		chckbxIncludeAlarmMessage.setSelected(includeMessage); 			// Applying previous settings
+		chckbxIncludeAlarmMessage = new JCheckBox("Include Alarm Message");
+		chckbxIncludeAlarmMessage.setBounds(21, 52, 135, 23);
+		chckbxIncludeAlarmMessage.setSelected(includeMessage);
 		chckbxIncludeAlarmMessage.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				txtTimesUp.setEditable(chckbxIncludeAlarmMessage.isSelected());
+				txtTimesUp.setEnabled(chckbxIncludeAlarmMessage.isSelected());
+			
 			}
 		});
+		contentPane.add(chckbxIncludeAlarmMessage);
+				
 		
 		/**
-		 * Add Tone Button
+		 * Add Tone button
 		 */
-		JButton btnAddTone = new JButton("Add Tone");
+		btnAddTone = new JButton("Add Tone");
+		btnAddTone.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+			AddTone.main(null);
+				
+			}
+		});
 		btnAddTone.setBorder(UIManager.getBorder("Button.border"));
 		btnAddTone.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnAddTone.setIconTextGap(0);
 		contentPane.add(btnAddTone);
-		btnAddTone.addActionListener(this);
 		btnAddTone.setBounds(30, 137, 91, 34);
-		btnApply.setActionCommand("5");
+		
 		
 		/**
 		 * 
 		 * Alarm Message TextField
 		 */
 		txtTimesUp = new JTextField();
-		txtTimesUp.setEnabled(chckbxIncludeAlarmMessage.isSelected());  // check if text Box is selected
 		txtTimesUp.setFont(new Font("Microsoft New Tai Lue", Font.PLAIN, 20));
 		txtTimesUp.setText(alarmMessage);		// Applying previous settings
 		txtTimesUp.setForeground(Color.BLACK);
@@ -212,57 +274,18 @@ public class Settings extends JFrame implements ActionListener {
 		txtTimesUp.setBounds(20, 82, 315, 44);
 		contentPane.add(txtTimesUp);
 		txtTimesUp.setColumns(10);
+		txtTimesUp.setEnabled(includeMessage);
 		
 	}
 	
 	
 	
 	
-	/**
-	 * Method to describe various actions of various components
-	 * @param e It is the ActionEvent object.
-	 */
-	
-	@SuppressWarnings("unchecked")
-	public void actionPerformed(ActionEvent e){
-		JButton button = null;
-		try {
-		 button = (JButton)e.getSource();
-		}
-		catch(Exception notConvertible){
-			
-		}
-		String buttonText = button.getText();
-		/**
-		 * Comparison done using their textValues 
-		 */
-		if(buttonText.equals("OK")) {
-		// We find the parent and then extract information from the respective components of parent	
-		
-			JPanel parent = (JPanel) button.getParent();
-		String fileName = ((JComboBox<String>)parent.getComponent(2)).getSelectedItem().toString();
-		boolean includeMessage =   ((JCheckBox)parent.getComponent(4)).isSelected();
-		String AlarmMessage = ((JTextField)parent.getComponent(6)).getText();
-		config.setSettings(fileName, includeMessage, AlarmMessage);
-		frame.close();
-		}
-		
-		else
-		if(buttonText.equals("Cancel")) {
-			frame.close();
-				
-			}
-		else
-		if(buttonText.equals("Add Tone")) {
-			AddTone.main(null);;		
-				}	
-		
-	}
 	/**
 	 * Closes and disposes the window
 	 */
-	private void close(){
-		this.dispose();
+	private static void close(){
+		frame.dispose();
 	}
 	
 	
@@ -271,7 +294,7 @@ public class Settings extends JFrame implements ActionListener {
 	 * @return The present instance of Settings window. In case of absence of instance, null is returned which is default value.
 	 */
 	public static Settings getInstance(){
-	return frame;
+	return window;
 	}
 	
 	/**
@@ -281,6 +304,7 @@ public class Settings extends JFrame implements ActionListener {
 	frame.setVisible(true);	
 	frame.requestFocus();
 	}
+	
 	
 	
 	

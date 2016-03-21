@@ -57,6 +57,7 @@ public  class SetAlarm {
 	 * Cancel or stop the alarm task
 	 */
 	public static void cancelTask(){
+		if(timer != null)
 		timer.cancel();
 	}
 }
