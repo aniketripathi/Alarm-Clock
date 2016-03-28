@@ -44,8 +44,7 @@ public  class SetAlarm {
 		timer.schedule(new TimerTask() {
 			  @Override
 			  public void run() {
-			    // run the task
-				  
+			    // run the task		  
 				  AlarmMessage.main(null);
 			  }
 			}, ((minutes * 60)) * 1000  );	

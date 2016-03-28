@@ -118,7 +118,7 @@ public class AlarmMessage extends JDialog {
 				extendButton.setFont(new Font("Tahoma", Font.BOLD, 16));
 				extendButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-					 SetAlarm.extendTask(1);
+					 SetAlarm.extendTask(5);
 					 AlarmMessage.close(clip);
 						
 					}
