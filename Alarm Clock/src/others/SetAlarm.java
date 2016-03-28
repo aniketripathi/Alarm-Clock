@@ -47,7 +47,6 @@ public  class SetAlarm {
 			    // run the task
 				  
 				  AlarmMessage.main(null);
-				  JOptionPane.showConfirmDialog(null, "ReallY");
 			  }
 			}, ((minutes * 60)) * 1000  );	
 	}
