@@ -179,7 +179,9 @@ public class AlarmWindow {
 		btnExit.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				if(config.getAlarmStatus())		Warning.main(null);
+				if(config.getAlarmStatus())		{
+					Warning.main(null);
+				}
 				else
 				{
 					config.setAlarmStatus(false); 		// turn off the alarm

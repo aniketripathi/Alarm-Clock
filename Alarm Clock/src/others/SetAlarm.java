@@ -2,8 +2,6 @@ package others;
 
 import java.util.*;
 
-import javax.swing.JOptionPane;
-
 import windows.AlarmMessage;
 /**
  * This class is used to handle scheduling operations of alarm. 
@@ -30,7 +28,6 @@ public  class SetAlarm {
 			    // run the task
 				  
 				  AlarmMessage.main(null);
-				  JOptionPane.showConfirmDialog(null, "ReallY");
 			  }
 			}, ((minutes * 60)-seconds) * 1000  );	
 	}

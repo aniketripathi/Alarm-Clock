@@ -6,6 +6,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import others.Config;
+import others.SetAlarm;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -77,7 +81,10 @@ public class Warning extends JDialog {
 				okButton.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent e){
-						System.exit(1);
+						Config config = new Config();
+						config.setAlarmStatus(false); 		// turn off the alarm
+						SetAlarm.cancelTask();
+						System.exit(1);	
 						
 					}
 				});
