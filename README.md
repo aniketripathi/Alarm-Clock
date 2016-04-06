@@ -12,6 +12,8 @@ Resources: An alarm clock icon and audio tone is used. I do not take credit for 
 
 4) Your tone will be automatically loaded next time when you run the application.
 
+5) Note that your tone must be in *.wav format.The application may not play the tone if it doesn't matches the required format.
+
 For custom alarm message, there is an option in the settings.
 
 To download the application download the jar file.
