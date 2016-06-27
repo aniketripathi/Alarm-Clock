@@ -102,7 +102,7 @@ public class Settings  {
 		        }
 		    }
 		    jar.close();
-		} else { 															// Run with IDE
+		} /** else { 															// Run with IDE
 		    final URL url = Settings.class.getResource("/" + path);
 		    if (url != null) {
 		        try {
@@ -116,7 +116,7 @@ public class Settings  {
 		            // never happens
 		        }
 		    }
-		}	}
+		} **/	}
 	
 	
 	
