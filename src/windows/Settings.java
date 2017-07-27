@@ -85,46 +85,18 @@ public class Settings  {
 	 * @param comboBox  comboBox where files needs to be added
 	 */
 	private void addFiles(JComboBox<String> comboBox) {
-	try{
-		final String path = "main/resources/audio";
-		final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-
-		if(jarFile.isFile()) {  									// Run with JAR file
-		    final JarFile jar = new JarFile(jarFile);
-		    final Enumeration<JarEntry> entries = jar.entries(); 		//gives ALL entries in jar
-		    while(entries.hasMoreElements()) {
-		        final String name = entries.nextElement().getName();
-		        if (name.startsWith(path + "/")) { 						//filter according to the path
-		            String tempname = name.substring(name.lastIndexOf("/")+1);  // extract only file name
-		            if(acceptFile(name))
-		            	comboBox.addItem(tempname);
-		            
-		        }
-		    }
-		    jar.close();
-		} /** else { 															// Run with IDE
-		    final URL url = Settings.class.getResource("/" + path);
-		    if (url != null) {
-		        try {
-		            final File apps = new File(url.toURI());
-		            for (File app : apps.listFiles()) {
-		            	 String tempname = app.toString().substring(app.toString().lastIndexOf('\\')+1);  // extract only file name -use '\' as separator
-				            if(acceptFile(tempname))
-				            	comboBox.addItem(tempname);
-		            }
-		        } catch (URISyntaxException ex) {
-		            // never happens
-		        }
-		    }
-		} **/	}
-	
-	
-	
-	catch(Exception e){
-		JOptionPane.showInputDialog("error" + e.getMessage() + e.getLocalizedMessage());
-	}
+		final String path = "Alarm Clock/audio";
 		
-	
+		File file = new File(path);
+		System.out.print(file.getAbsolutePath());
+		
+		if(file != null){
+		for(String fileName : file.list()){
+			if(acceptFile(fileName))
+				comboBox.addItem(fileName);
+		}
+		}
+		
 	}
 	
 		
