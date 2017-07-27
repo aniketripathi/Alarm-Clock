@@ -85,11 +85,9 @@ public class Settings  {
 	 * @param comboBox  comboBox where files needs to be added
 	 */
 	private void addFiles(JComboBox<String> comboBox) {
-		final String path = "Alarm Clock/audio";
+		final String path = "audio";
 		
 		File file = new File(path);
-		System.out.print(file.getAbsolutePath());
-		
 		if(file != null){
 		for(String fileName : file.list()){
 			if(acceptFile(fileName))
