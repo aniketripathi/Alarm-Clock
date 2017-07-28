@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -68,9 +69,8 @@ public class AlarmMessage extends JDialog {
 		final Config config = new Config();
 		boolean includeMessage = config.getIncludeMessageStatus();
 		String alarmText = config.getAlarmMessage();
-		String fileName = config.getFileName();
-		
-		
+		String file = config.getFile();
+				
 	/**
 	 * Creating the dialog box	
 	 */
@@ -149,13 +149,14 @@ public class AlarmMessage extends JDialog {
 
 		
 	try{
-		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(AlarmMessage.class.getResource("/main/resources/audio/"+fileName));
-		 clip = AudioSystem.getClip();
+		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(file));
+		clip = AudioSystem.getClip();
 		clip.open(audioInputStream);
 		clip.start();
 		clip.loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	catch( Exception soundException){
+		System.out.println(soundException.getMessage());
 		// Do nothing if sound can't be played
 	}
 	
@@ -170,8 +171,10 @@ public class AlarmMessage extends JDialog {
 	 * of dialog box.
 	 */
 	private static void close(Clip clip){
+	if(clip != null) {	
 		clip.stop();
 		clip.close();
+	}
 		dialog.dispose();
 		AlarmWindow.restore();
 	

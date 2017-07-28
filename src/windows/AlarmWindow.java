@@ -67,7 +67,7 @@ public class AlarmWindow {
 			public void run() {
 				try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					AlarmWindow window = new AlarmWindow();
+					initialize();
 					frmAlarm.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -77,12 +77,7 @@ public class AlarmWindow {
 	}
 
 	
-	/**
-	 * Default Constructor. It initialization of window is done by initialize() method.
-	 */
-	public AlarmWindow() {
-		initialize();
-	}
+	
 
 	
 	
@@ -92,7 +87,7 @@ public class AlarmWindow {
 	 * ActionListener. Closing this window will result in termination of application will minimizing will
 	 * just move this window to system tray.
 	 */
-	private void initialize() {
+	private static void initialize() {
 		
 		/**
 		 * Extracting the previous saved alarm time

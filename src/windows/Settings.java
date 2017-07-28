@@ -1,31 +1,25 @@
 package windows;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
 import java.awt.Color;
-import java.awt.Font;
-import others.Config;
-
-import javax.swing.UIManager;
 import java.awt.Dimension;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Window.Type;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+
+import others.Config;
 
 /**
  * This class creates a window used to change the user dependent settings of the application. This includes the alarm message and the
@@ -42,7 +36,7 @@ public class Settings  {
 	private JTextField txtTimesUp;
 	private static JFrame frame;
 	private static Settings window;
-	private static  JComboBox<String> comboBox;
+	private static  JComboBox<File> comboBox;
 	private static  JCheckBox chckbxIncludeAlarmMessage;
 	private static  JButton btnAddTone;
 	private static  JButton btnApply;
@@ -84,13 +78,13 @@ public class Settings  {
 	 * checked using acceptFile() method. This adopted is used from one of the forums of StackOverflow.
 	 * @param comboBox  comboBox where files needs to be added
 	 */
-	private void addFiles(JComboBox<String> comboBox) {
+	private void addFiles(JComboBox<File> comboBox) {
 		final String path = "audio";
 		
 		File file = new File(path);
 		if(file != null){
-		for(String fileName : file.list()){
-			if(acceptFile(fileName))
+		for(File fileName : file.listFiles()){
+			if(fileName.isFile() && acceptFile(fileName.getName()))
 				comboBox.addItem(fileName);
 		}
 		}
@@ -112,10 +106,12 @@ public class Settings  {
 	/**
 	 * Loading previous settings
 	 */
-		String fileName = config.getFileName();
+		String file = config.getFile();
 		String alarmMessage = config.getAlarmMessage();
 		boolean includeMessage = config.getIncludeMessageStatus();
-	/**
+		
+		/**
+	 * 
 	 * Setting Attributes of the Settings Window
 	 */
 		frame = new JFrame();
@@ -141,7 +137,7 @@ public class Settings  {
 		btnApply.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				config.setSettings((String) comboBox.getSelectedItem(), chckbxIncludeAlarmMessage.isSelected(), txtTimesUp.getText());
+				config.setSettings( ((File)comboBox.getSelectedItem()).getPath(), chckbxIncludeAlarmMessage.isSelected(), txtTimesUp.getText());
 				Settings.close();
 				
 			}
@@ -167,12 +163,12 @@ public class Settings  {
 		
 		
 		
-		comboBox = new JComboBox<String>();
+		comboBox = new JComboBox<File>();
 		comboBox.setBounds(90, 8, 167, 22);
 		contentPane.add(comboBox);
 		addFiles(comboBox);							//adding filenames
-		if(fileName != null)
-		comboBox.setSelectedItem(fileName); 		// Applying previous settings 
+		if(file != null)
+		comboBox.setSelectedItem(file); 		// Applying previous settings 
 		
 		
 		

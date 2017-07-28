@@ -1,21 +1,18 @@
 Alarm Clock
 
-Alarm Clock is a java based GUI application. This is my first project and is solely for education purpose. The application sets the alarm for a given time and displays an alert with a message and a tone.
+Alarm Clock is a java based GUI application. The application sets the alarm for a given time and displays an alert with a message and a tone.
 
 Resources: An alarm clock icon and audio tone is used. I do not take credit for any of the resources. Custom alarm tones can be added by following these steps..
 
-1) Assume jar file to be a zip file.
+To download the alarm clock simpley download the AlarmClock folder. Notice that it contains an audio folder and a jar file.
 
-2) Open the file with any zip file explorer like winrar.
+1) Copy your tone into the audio folder inside AlarmClock directory.
 
-3) Add your tone to the folder main/resources/audio/
+2) Your tone will be automatically loaded next time when you run the application.
 
-4) Your tone will be automatically loaded next time when you run the application.
-
-5) Note that your tone must be in *.wav format.The application may not play the tone if it doesn't matches the required format.
+3) Note that your tone must be in *.wav format.The application may not play the tone if it doesn't matches the required format.
 
 For custom alarm message, there is an option in the settings.
 
-To download the application download the jar file.
-
 Fixed bugs: Settings window not loading.
+Recent Fix: Alarm tone not loaded sometimes.

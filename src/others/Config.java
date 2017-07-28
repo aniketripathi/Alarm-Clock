@@ -15,7 +15,7 @@ import java.util.prefs.Preferences;
 public class Config {
 	
     private Preferences preferences;
-	private final String ID1 = "FILENAME";				 // name of audio file
+	private final String ID1 = "FILE";				 // name of audio file
 	private final String ID3 = "INCLUDEMESSAGE";	   //  whether to include alarm message or not
 	private final String ID4 = "ALARMTEXT";				// saves the alarm text
 	private final String ID5 = "HOURS";					// hour time of alarm
@@ -24,13 +24,13 @@ public class Config {
 	
 	/**
 	 * Parameterized Constructor. Save the defined settings.
-	 * @param fileName name of the audio file
+	 * @param file name of the audio file
 	 * @param includeMessage stores whether to include alarm message
 	 * 
 	 */
-	public Config(String fileName, boolean includeMessage, String AlarmMessage){
+	public Config(String file, boolean includeMessage, String AlarmMessage){
 		preferences = Preferences.userNodeForPackage(this.getClass());
-		if(fileName != null)			preferences.put(ID1, fileName);
+		if(file != null)			preferences.put(ID1, file);
 										preferences.putBoolean(ID3, includeMessage);
 	    if(AlarmMessage != null)		preferences.put(ID4, AlarmMessage);
 	}
@@ -71,11 +71,11 @@ public class Config {
 	
 	/**
 	 * Method that saves the gives setting
-	 * @param fileName name of the audio file
+	 * @param file name of the audio file
 	 * @param includeMessage stores whether to include alarm message
 	 */
-	public void setSettings(String fileName, boolean includeMessage, String AlarmMessage ){
-		if(fileName != null)		preferences.put(ID1, fileName);
+	public void setSettings(String file, boolean includeMessage, String AlarmMessage ){
+		if(file != null)		preferences.put(ID1, file);
 									preferences.putBoolean(ID3, includeMessage);
 		if(AlarmMessage != null)	preferences.put(ID4, AlarmMessage);
 	}
@@ -105,7 +105,7 @@ public class Config {
 	 * Returns name of audio file previously saved.
 	 * @return name of audio file
 	 */
-	public String getFileName(){
+	public String getFile(){
 		return preferences.get(ID1, null);
 	}
 	
